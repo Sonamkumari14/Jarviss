@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS - Science Project Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        #output {
+            margin: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>JARVIS - Science Project Assistant</h1>
+    <p id="output">Hello, I am JARVIS, your personal assistant for the science exhibition project. How can I assist you today?</p>
+    <button onclick="startListening()">Ask JARVIS</button>
+
+    <script>
+        // Initialize Speech Synthesis and Recognition API
+        const synth = window.speechSynthesis;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            synth.speak(utterance);
+        }
+
+        function startListening() {
+            speak("I'm listening...");
+            recognition.start();
+        }
+
+        recognition.onresult = function(event) {
+            const query = event.results[0][0].transcript.toLowerCase();
+            document.getElementById("output").innerText = `You said: ${query}`;
+            handleCommand(query);
+        };
+
+        function handleCommand(query) {
+            let response;
+            if (query.includes("science project") || query.includes("exhibition")) {
+                response = "Our science exhibition project is about Smart City technology. We focus on how IoT, smart infrastructure, and renewable energy can make cities more efficient and sustainable.";
+            } else if (query.includes("iot")) {
+                response = "IoT in a smart city refers to the use of connected devices like sensors to gather and analyze data, improving services like traffic management and energy use.";
+            } else if (query.includes("renewable energy")) {
+                response = "Renewable energy reduces reliance on fossil fuels and lowers emissions. Solar panels, wind turbines, and smart grids help manage energy more efficiently in a smart city.";
+            } else if (query.includes("infrastructure")) {
+                response = "Smart infrastructure uses technology to monitor and manage city services like transportation, water systems, and energy grids, ensuring better efficiency and sustainability.";
+            } else if (query.includes("hello")) {
+                response = "Hello! How can I assist you today?";
+            } else if (query.includes("quit") || query.includes("exit")) {
+                response = "Goodbye!";
+                speak(response);
+                return;
+            } else {
+                response = "Sorry, I don't have an answer for that. Please ask something related to the science project.";
+            }
+            
+            document.getElementById("output").innerText = response;
+            speak(response);
+        }
+
+        recognition.onerror = function(event) {
+            document.getElementById("output").innerText = "Error occurred: " + event.error;
+            speak("Sorry, I didn't understand. Please try again.");
+        };
+
+        recognition.onspeechend = function() {
+            recognition.stop();
+        };
+    </script>
+</body>
+</html>
